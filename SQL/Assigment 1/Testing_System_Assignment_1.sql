@@ -1,78 +1,94 @@
+DROP DATABASE IF EXISTS Testing_System_Assignment_1;
 CREATE DATABASE Testing_System_Assignment_1;
 USE Testing_System_Assignment_1;
 
 CREATE TABLE Department (
-	DeparmentID INT,
-	DeparmentName VARCHAR(50)
+	DepartmentID TINYINT UNSIGNED auto_increment PRIMARY KEY,
+	DepartmentName VARCHAR(20) UNIQUE KEY
 );
 
 CREATE TABLE Position (
-	PositionID INT,
-	PositionName VARCHAR(50)
+	PositionID TINYINT UNSIGNED auto_increment PRIMARY KEY,
+	PositionName VARCHAR(20) UNIQUE KEY
 );
 
 CREATE TABLE `Account` (
-	AccountID INT,
-	Email VARCHAR(50),
-	Username VARCHAR(50),
-	Fullname VARCHAR(50),
-	DeparmentID INT,
-	PositionID INT,
-	CreateDate date
+	AccountID SMALLINT UNSIGNED auto_increment PRIMARY KEY,
+	Email VARCHAR(30),
+	Username VARCHAR(20),
+	Fullname VARCHAR(30),
+    DepartmentID TINYINT UNSIGNED,
+    PositionID TINYINT UNSIGNED,
+	CreateDate DATE,
+    FOREIGN KEY (DepartmentID) REFERENCES Department(DepartmentID),
+	FOREIGN KEY (PositionID) REFERENCES Position (PositionID)
 );
 
 CREATE TABLE `Group` (
-	GroupID INT,
-	GroupName VARCHAR(50),
-	CreatorID INT,
-	CreateDate DATE
+	GroupID TINYINT UNSIGNED auto_increment PRIMARY KEY,
+	GroupName VARCHAR(20),
+	CreatorID SMALLINT UNSIGNED,
+    CreateDate DATE,
+    FOREIGN KEY (CreatorID) REFERENCES `Account` (AccountID)
 );
 
 CREATE TABLE GroupAccount (
-	GroupID INT,
-	AccountID INT,
-	JointDate DATE
+	GroupID TINYINT UNSIGNED,
+    AccountID SMALLINT UNSIGNED,
+	JointDate DATE,
+    FOREIGN KEY (GroupID) REFERENCES  `Group`(GroupID),
+	FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID)
 );
 
 CREATE TABLE TypeQuestion (
-	TypeID INT,
-	TypeName VARCHAR(50)
+	TypeID TINYINT UNSIGNED auto_increment PRIMARY KEY,
+	TypeName VARCHAR(20)
 );
 
 CREATE TABLE CategoryQuestion (
-	CategoryID INT,
-	CategoryName VARCHAR(50)
+	CategoryID TINYINT UNSIGNED auto_increment PRIMARY KEY,
+	CategoryName VARCHAR(20)
 );
 
 CREATE TABLE Question (
-	QuestionID INT,
+	QuestionID SMALLINT UNSIGNED auto_increment PRIMARY KEY,
 	Content VARCHAR(100),
-	CategoryID INT,
-	TypeID INT,
-	CreatorID INT,
-	CreateDate DATE
+	CategoryID TINYINT UNSIGNED,
+    TypeID TINYINT UNSIGNED,
+    CreatorID SMALLINT UNSIGNED,
+    CreateDate DATE,
+    FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion (CategoryID),
+	FOREIGN KEY (TypeID) REFERENCES TypeQuestion (TypeID),
+    FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID)
+	
 );
 
 CREATE TABLE Answer (
-	AnswerID INT,
-	Content VARCHAR(100),
-	QuestionID INT,
-	isCorrect INT
+	AnswerID TINYINT UNSIGNED auto_increment PRIMARY KEY,
+	Content VARCHAR(500),
+	QuestionID SMALLINT UNSIGNED,
+    isCorrect ENUM ("True","False"),
+    FOREIGN KEY (QuestionID) REFERENCES Question (QuestionID)
 );
 
-CREATE TABLE Excam (
-	ExamID INT,
-	`Code` INT,
+CREATE TABLE Exam (
+	ExamID TINYINT UNSIGNED auto_increment primary key,
+	`Code` TINYINT UNSIGNED,
 	Title VARCHAR(50),
-	CategoryID INT,
-	Duration VARCHAR(50), 
-	CreatorID INT,
-	CreateDate DATE 
+	CategoryID TINYINT UNSIGNED,
+    Duration TIME, 
+	CreatorID SMALLINT UNSIGNED,
+    CreateDate DATE,
+    FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion (CategoryID),
+    FOREIGN KEY (CreatorID) REFERENCES `Account`(AccountID)
+   	
 );
 
 CREATE TABLE ExamQuestion (
-	ExamID INT,
-	QuestionID INT
+	ExamID TINYINT UNSIGNED,
+    QuestionID smallint UNSIGNED,
+    FOREIGN KEY (ExamID) REFERENCES Exam (ExamID),
+    FOREIGN KEY (QuestionID) REFERENCES Question (QuestionID)
 );
 
 
